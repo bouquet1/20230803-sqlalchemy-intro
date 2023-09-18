@@ -5,8 +5,20 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
-# 1. ✅ Develop a student schema: name, email, grade, birthday(year,month,day)
-# 2. ✅ Create a new student record and add it to the database
+# 1. ✅ Develop a student schema: name, email, grade, birthday(year,month,day). part that line starts with id = Column()...
+# 2. ✅ Create a new student record and add it to the database. Asagidakini yazarak yaotik.
+#   thompson_plyler = Student(
+#       name = "Thompson Plyler	", 
+#       email = "thompson.plyler@flatironschool.com", 
+#       grade = 9, 
+#       birthday = datetime(
+#           year = 1981, 
+#           month = 02,    
+#           day = 18
+#       )
+#   )  
+# Tom Tobar ve Alan Turingi de ayni sekilde yazdik.
+
 # 3. ✅ Query all students. 
 # 4. ✅ Query all students by name.
 # 5. ✅ Query all students by name, and order by name. 
@@ -49,3 +61,12 @@ session.commit()
 albert_einstein = query.first()
 print("Hopefully is None: ", albert_einstein)
 
+# Extra nites from lecture 
+    # Index func helping us speed up the searhc. what is your expect to be use a query parameter it is name in this case.
+    # email (55) restricting the length of the email to 55
+    # def __repr__ (self) comes with every single python class. f""" string interpolation. repr[/reapir/] do: affects when we print this value we gonna get more useful info rather than just print something. useful tool we can trust it is for python not sql specific thing.
+    # place it to db, declare an engine, make a session with sessionmaker. Engine is the python obj sits directly on IF with directly with DB.  the thing typing python commands sending them to DB and then retrieving the info is the ENGINE. we pass the engine into a sessionmaker. engine talking directly to DB session we'll pas in that session in.  import sessionmaker don't forget. "from sqlalchemy.orm import sessionmaker"  
+    #   engine = create_engine('sqlite:///students.db') => comes from import create_engine. it'll interact with students.db and if it doesn;t exist it will create students.db
+    #   Base.metadata.create_all(engine)
+    #   Session = sessionmaker(bind=engine) => with sessionmaker() method, we get a func back Session() by declarion a Session. the 'sessionmaker(bind=engine)' here is what's called a factory.
+    #   session = Session() => we're calling/invoking Session() we use the session class and create a session object that is instance of a session class. 
