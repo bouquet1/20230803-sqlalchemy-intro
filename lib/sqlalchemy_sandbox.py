@@ -17,17 +17,95 @@ Base = declarative_base()
 #           day = 18
 #       )
 #   )  
-# Tom Tobar ve Alan Turingi de ayni sekilde yazdik.
+# Tom Tobar ve Albert Einstein (sonra siliyoruz denemek icin ondan listenin son halinde yok) i de ayni sekilde yazdik. we need to add and commit our students to DB.  
+#   session.add(thompson_plyler)    =>TO ADD TO DB
+#   session.commit()                => TO PERSIST/SAVE
+#   print(f"New student ID is {thompson_plyler.id}")
 
-# 3. ✅ Query all students. 
+
+# we can also add multiple as a list e.g
+#   session.bulk_save_objects([tom_tobar, alan_turing])    
+#   session.commit()                    
+#   print(f"New student ID is {alan_turing.id}")  
+#   print(f"New student ID is {tom_tobar.id}")
+#when we run lib/sqlalchemy_sandbox.py we get more info becasue we used  print(f"New student ID is {alan_turing.id}"). IMPORTANT: in terminal we got New Student ID is None for both tom and alan but the info is committed to the DB because .bulk_save_objects() don't get return the same as .add() it returns none.
+
+
+# 3. ✅ Query all students (ebery instance of Student class/Student model)   
+# ONE WAY
+#       students = session.query(Student)   
+#       print([student for student in students])   
+# => (due to __repr__) Student 1: Albert Einstein Grade: 6, Student 2: Thompson Plyler Grade:8, Student 3: Tom etc... 
+
+#ANOTHER WAY  
+#       students = session.query(Student).all()    
+#       print(students)
+
 # 4. ✅ Query all students by name.
+#       students = session.query(Student.name).all()    
+#       print(students)
+
 # 5. ✅ Query all students by name, and order by name. 
+#       students = session.query(Student.name).order_by(Student.name).all()    
+#       print(students)
+#       => [('Alan Turing',), ('Thompson Plyler	',), ('Tom Tobar',)]
+
 # 6. ✅ Query all students by name, order by name, descending.
-# 7. ✅ Limit student query to 1 result
+#       students = session.query(Student.name).order_by(desc(Student.grade)).all()    
+#       print(students)
+
+# 7. ✅ Limit student query to 1 result. Oldest person. Sort by bday.
+#       oldest_student = session.query(Student.name, Student.birthday).order_by(desc(Student.birthday)).limit(1).all()    
+#       print(oldest_student)
+
+#       oldest_student = session.query(Student.name, Student.birthday).order_by(asc(Student.birthday)).limit(1).all()    
+#       print(oldest_student)
+
+
 # 8. ✅ Use the SQLAlchemy func.count function to report how many student entries exist.
+#       student_count = session.query(func.count(Student.id)).first()
+#       print(student_count)
+
+
 # 9. ✅ Filter student query results by name
-# 10. ✅ Update the student data for a single column. 
-# 11. ✅ Delete a student database entry/row. 
+#       query = session.query(Student).filter(Student.name.like("%Thompson"), Student.grade == 7)  
+#       print(query)
+
+
+# 10. ✅ Update the student data for a single column. Let's increase the grades of every student.
+# WITH UPDATE  METHOD
+#       session.query(Student).update({Student.grade: Student.grade + 1})
+#       
+#       print([(
+#           student.name,
+#           student.grade
+#       ) for student in session.query(Student)])
+
+
+# WITHOUT UPDATE  METHOD
+#       for student in session.query(Student)
+#           student.grade += 1
+
+#           session.commit()
+# above we query and updated and committed it
+
+#           print([(student.name, student.grade) for student in session.query(Student)])
+# here we retrieve the (read) the uograded results 
+
+
+# 11. ✅ Delete a student database entry/row. Find the person(entry) to delete and than run delete method on the entry.
+#   query = session.query(Student).filter(Student.name.like("%Albert%"))
+#   albert_einstein = query.first()
+#   print(albert_einstein)
+#
+#   session.delete(albert_einstein)
+#   session.commit()
+#
+#   albert_einstein = query.first()
+#   print("Hopefully is None: ", albert_einstein)
+#   => Hopefully is None: None bc we deleted and committed it 
+
+
 
 class Student(Base):
     __tablename__ = 'students'
@@ -44,6 +122,7 @@ class Student(Base):
         return f"\n Student {self.id}: "\
             + f"{self.name} "\
             + f"Grade: {self.grade}"
+            # \n to make a new line so each student in terminal will be written separate lines instead of one line. more readable.
 
 if __name__ == '__main__':
     engine = create_engine('sqlite:///students.db')
@@ -61,7 +140,7 @@ session.commit()
 albert_einstein = query.first()
 print("Hopefully is None: ", albert_einstein)
 
-# Extra nites from lecture 
+# Extra notes from lecture 
     # Index func helping us speed up the searhc. what is your expect to be use a query parameter it is name in this case.
     # email (55) restricting the length of the email to 55
     # def __repr__ (self) comes with every single python class. f""" string interpolation. repr[/reapir/] do: affects when we print this value we gonna get more useful info rather than just print something. useful tool we can trust it is for python not sql specific thing.
